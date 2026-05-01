@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EES — Who's Most Likely To</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="poll-container">
+    <div class="poll-header">
+      <div class="brand-row">
+        <img src="/iiserb-logo.png" class="brand-logo" alt="IISERB" />
+        <div class="brand-text">
+          <span class="brand-dept">Dept. of Earth &amp; Environmental Sciences</span>
+          <span class="brand-inst">IISERB Bhopal</span>
+        </div>
+      </div>
+      <h1>Who's Most Likely To?</h1>
+    </div>
+
+    <div class="poll-card card" id="waiting-card">
+      <div class="waiting-state">
+        <div class="spinner"></div>
+        <p id="waiting-msg">Waiting for the host to start...</p>
+      </div>
+    </div>
+
+    <div class="poll-card card" id="question-card" style="display:none;">
+      <p class="question-text" id="question-text"></p>
+      <div class="answer-form" id="answer-form">
+        <!-- Professor questions: faculty dropdown -->
+        <div class="name-select-wrap" id="prof-select" style="display:none;">
+          <input
+            type="text"
+            id="name-search"
+            class="name-search"
+            placeholder="Search name..."
+            autocomplete="off"
+          />
+          <div class="name-selected" id="name-selected" style="display:none;"></div>
+          <div class="name-dropdown" id="name-dropdown"></div>
+        </div>
+        <!-- Open questions: free text -->
+        <input
+          type="text"
+          id="open-input"
+          class="name-search"
+          placeholder="Type your answer..."
+          autocomplete="off"
+          style="display:none;"
+        />
+        <button class="btn btn-primary" id="submit-btn" onclick="submitAnswer()" disabled>
+          Submit Answer
+        </button>
+      </div>
+      <div class="submitted-state" id="submitted-state" style="display:none;">
+        <div class="check">✓</div>
+        <p>Answer submitted! Waiting for results...</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/poll.js"></script>
+</body>
+</html>

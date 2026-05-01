@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — EES Most Likely To</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+  <!-- Auth overlay -->
+  <div class="auth-overlay" id="auth-overlay">
+    <div class="auth-box">
+      <div style="text-align:center;margin-bottom:20px;">
+        <img src="/iiserb-logo.png" class="brand-logo" alt="IISERB" style="margin:0 auto;" />
+        <div style="font-size:12px;color:var(--muted);margin-top:8px;letter-spacing:0.04em;">EES &middot; IISERB Bhopal</div>
+      </div>
+      <h2>Admin Login</h2>
+      <p>Enter your admin password to continue.</p>
+      <input type="password" id="auth-input" placeholder="Password" />
+      <div class="auth-error" id="auth-error" style="display:none;">Incorrect password.</div>
+      <br /><br />
+      <button class="btn btn-primary" style="width:100%;" onclick="authSubmit()">Login</button>
+    </div>
+  </div>
+
+  <!-- Main layout -->
+  <div class="admin-layout" id="admin-layout" style="display:none;">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <img src="/iiserb-logo.png" class="brand-logo-sm" alt="IISERB" />
+        <div>
+          <div class="admin-logo">Most Likely To</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">EES &middot; IISERB Bhopal</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-title">Questions</div>
+        <div id="question-list" style="display:flex;flex-direction:column;gap:6px;"></div>
+      </div>
+
+      <div>
+        <div class="section-title">Add Question</div>
+        <div class="add-question-form">
+          <input type="text" id="new-question-input" placeholder="Who's most likely to..." maxlength="200" />
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);cursor:pointer;">
+            <input type="checkbox" id="prof-toggle" style="accent-color:var(--accent);width:auto;" />
+            Professor answers only
+          </label>
+          <button class="btn btn-primary" onclick="addQuestion()">+ Add</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="admin-main">
+      <div class="admin-top">
+        <h2>Dashboard</h2>
+        <div class="connection-badge">
+          <span class="status-dot" id="status-dot"></span>
+          <span id="status-text">Connecting...</span>
+        </div>
+      </div>
+
+      <div id="no-question" class="no-question-msg card" style="display:none;">
+        Select a question from the sidebar to begin.
+      </div>
+
+      <div id="question-controls" style="display:none;">
+        <div class="current-q-label">Current Question</div>
+        <div class="current-q-text" id="current-q-text"></div>
+
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+          <span class="revealed-badge hidden" id="reveal-badge">Hidden</span>
+        </div>
+
+        <div style="display:flex;gap:12px;margin-bottom:24px;">
+          <div class="stat-card" style="flex:1;">
+            <div class="stat-number" id="answer-count">0</div>
+            <div class="stat-label">answers submitted</div>
+          </div>
+          <div class="stat-card" style="flex:1;">
+            <div class="stat-number" id="player-count">0</div>
+            <div class="stat-label">connected players</div>
+          </div>
+        </div>
+
+        <div class="section-title" style="margin-bottom:12px;">Controls</div>
+        <div class="control-grid">
+          <button class="btn btn-success" id="reveal-btn" onclick="reveal()">Reveal Results</button>
+          <button class="btn btn-ghost" id="hide-btn" onclick="hide()">Hide Results</button>
+          <button class="btn btn-warning" onclick="resetVotes()">Reset Votes</button>
+        </div>
+
+        <div class="admin-links">
+          <a href="/results.html" target="_blank" class="btn btn-ghost">Open Results Screen</a>
+          <a href="/" target="_blank" class="btn btn-ghost">Open Poll Page</a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/admin.js"></script>
+</body>
+</html>

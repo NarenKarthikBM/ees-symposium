@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Results — EES Most Likely To</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="results-page">
+    <div class="results-header">
+      <div class="results-brand">
+        <img src="/iiserb-logo.png" class="brand-logo-sm" alt="IISERB" />
+        <div>
+          <h1>Who's Most Likely To?</h1>
+          <div class="results-subtitle">EES Department &middot; IISERB Bhopal</div>
+        </div>
+      </div>
+      <div class="connection-badge">
+        <span class="status-dot" id="status-dot"></span>
+        <span id="status-text">Connecting...</span>
+      </div>
+    </div>
+
+    <div id="results-question" class="results-question" style="display:none;"></div>
+
+    <div class="waiting-screen" id="waiting-screen">
+      <div id="qr-code"></div>
+      <p class="qr-label">Scan to join the poll</p>
+      <div class="qr-url" id="qr-url"></div>
+      <div class="waiting-footer">
+        <div class="spinner"></div>
+        <span>Waiting for results to be revealed...</span>
+      </div>
+    </div>
+
+    <svg id="bubble-chart" style="display:none;"></svg>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="/results.js"></script>
+</body>
+</html>
