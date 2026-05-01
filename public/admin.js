@@ -115,15 +115,23 @@ function renderQuestionList() {
   const list = document.getElementById('question-list');
   list.innerHTML = '';
   if (questions.length === 0) {
-    list.innerHTML = '<div style="color:var(--muted);font-size:13px;">No questions yet.</div>';
+    list.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:8px 4px;">No questions yet.</div>';
     return;
   }
-  questions.forEach(q => {
+  questions.forEach((q, i) => {
     const item = document.createElement('div');
     item.className = 'question-item' + (q.id === currentQuestionId ? ' active' : '');
+    const num = String(i + 1).padStart(2, '0');
+    const typeLabel = q.type === 'professor' ? 'Prof' : 'Open';
+    const typeClass = q.type === 'professor' ? 'professor' : 'open';
     item.innerHTML = `
-      <span class="question-item-text" title="${escHtml(q.text)}">${escHtml(q.text)}</span>
-      <span class="q-type-badge q-type-${q.type || 'open'}">${q.type === 'professor' ? 'Prof' : 'Open'}</span>
+      <span class="q-num">${num}</span>
+      <div class="q-body">
+        <span class="question-item-text">${escHtml(q.text)}</span>
+        <div class="q-meta">
+          <span class="q-type-badge q-type-${typeClass}">${typeLabel}</span>
+        </div>
+      </div>
       <button class="question-item-del" title="Delete" onclick="deleteQuestion(${q.id}, event)">×</button>
     `;
     item.addEventListener('click', () => setQuestion(q.id));
