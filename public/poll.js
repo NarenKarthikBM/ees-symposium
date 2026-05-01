@@ -29,6 +29,7 @@ const FACULTY = [
   'Dr. Shubhi Agrawal',
   'Dr. Somil Swarnkar',
   'Dr. Vinee Srivastava',
+  'Dr. Shrinivas Viladkar'
 ];
 
 let currentQuestionId = null;
