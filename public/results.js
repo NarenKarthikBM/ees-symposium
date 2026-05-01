@@ -48,14 +48,14 @@ function showChart() {
 // D3 Bubble Chart
 // Each color: { base, light (highlight), dark (shadow) }
 const COLORS = [
-  { base: '#7c6af7', light: '#a89fff', dark: '#3d2db3' },
-  { base: '#ec4899', light: '#f472b6', dark: '#9d174d' },
-  { base: '#10b981', light: '#34d399', dark: '#065f46' },
-  { base: '#f97316', light: '#fb923c', dark: '#9a3412' },
-  { base: '#3b82f6', light: '#60a5fa', dark: '#1e3a8a' },
-  { base: '#a855f7', light: '#c084fc', dark: '#6b21a8' },
-  { base: '#eab308', light: '#fbbf24', dark: '#854d0e' },
-  { base: '#ef4444', light: '#f87171', dark: '#991b1b' },
+  { base: '#b4a7f5', light: '#ddd8fb', dark: '#7c6af7' },
+  { base: '#f4a8d0', light: '#fad4e8', dark: '#e879ac' },
+  { base: '#6edebe', light: '#a8f0d8', dark: '#2cb888' },
+  { base: '#fdba8a', light: '#fed8b8', dark: '#f97316' },
+  { base: '#93c5fd', light: '#bfdbfe', dark: '#3b82f6' },
+  { base: '#d8b4fe', light: '#ede9fe', dark: '#a855f7' },
+  { base: '#fde68a', light: '#fef3c7', dark: '#ca8a04' },
+  { base: '#fca5a5', light: '#fee2e2', dark: '#ef4444' },
 ];
 
 const BASE_RADIUS = 40;
@@ -193,11 +193,11 @@ function renderBubbles(answers) {
     .attr('class', 'bubble-label')
     .attr('text-anchor', 'middle')
     .attr('dy', '-0.15em')
-    .attr('fill', d => d.rank === 0 ? '#1a1a00' : '#fff')
+    .attr('fill', d => d.rank === 0 ? '#1a1a00' : '#2d2060')
     .attr('font-family', 'Inter, system-ui, sans-serif')
     .attr('font-weight', '800')
     .attr('paint-order', 'stroke')
-    .attr('stroke', d => d.rank === 0 ? 'rgba(251,191,36,0.3)' : 'rgba(0,0,0,0.4)')
+    .attr('stroke', d => d.rank === 0 ? 'rgba(251,191,36,0.3)' : 'rgba(255,255,255,0.6)')
     .attr('stroke-width', '2px')
     .attr('stroke-linejoin', 'round')
     .style('pointer-events', 'none');
@@ -206,10 +206,10 @@ function renderBubbles(answers) {
     .attr('class', 'bubble-count')
     .attr('text-anchor', 'middle')
     .attr('dy', '1.1em')
-    .attr('fill', d => d.rank === 0 ? 'rgba(26,16,0,0.75)' : 'rgba(255,255,255,0.8)')
+    .attr('fill', d => d.rank === 0 ? 'rgba(26,16,0,0.75)' : 'rgba(45,32,96,0.8)')
     .attr('font-family', 'Inter, system-ui, sans-serif')
     .attr('paint-order', 'stroke')
-    .attr('stroke', d => d.rank === 0 ? 'rgba(251,191,36,0.2)' : 'rgba(0,0,0,0.3)')
+    .attr('stroke', d => d.rank === 0 ? 'rgba(251,191,36,0.2)' : 'rgba(255,255,255,0.4)')
     .attr('stroke-width', '1.5px')
     .attr('stroke-linejoin', 'round')
     .style('pointer-events', 'none');
