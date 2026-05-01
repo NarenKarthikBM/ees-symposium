@@ -58,8 +58,7 @@ const COLORS = [
   { base: '#fca5a5', light: '#fee2e2', dark: '#ef4444' },
 ];
 
-const BASE_RADIUS = 40;
-const MIN_RADIUS = 28;
+// Radii are computed dynamically from SVG dimensions in renderBubbles
 
 let simulation = null;
 let svg = null;
@@ -130,6 +129,94 @@ function resize() {
   }
 }
 
+// Word-wrap text and scale font so it always fits inside the bubble circle
+function setTextInBubble(gNode, d) {
+  const g = d3.select(gNode);
+  g.selectAll('text').remove();
+
+  const r = d.r;
+  const isWinner = d.rank === 0;
+  const maxW = r * 1.5;          // usable chord width at bubble center
+  const words = d.text.split(/\s+/);
+
+  function buildLines(fs) {
+    const charW = fs * 0.55;     // average char width estimate
+    const lines = [];
+    let cur = '';
+    for (const word of words) {
+      const test = cur ? cur + ' ' + word : word;
+      if (test.length * charW > maxW && cur) {
+        lines.push(cur);
+        cur = word;
+      } else {
+        cur = test;
+      }
+    }
+    if (cur) lines.push(cur);
+    return lines;
+  }
+
+  let fontSize = Math.min(r * 0.45, 24);
+  let lines = buildLines(fontSize);
+
+  // Scale down if the text block is too tall for the bubble
+  const blockH = lines.length * fontSize * 1.25;
+  if (blockH > r * 1.3) {
+    fontSize *= (r * 1.3) / blockH;
+    lines = buildLines(fontSize);
+  }
+
+  // Scale down if the longest line is still too wide
+  const longest = lines.reduce((m, l) => l.length > m.length ? l : m, '');
+  const longestW = longest.length * fontSize * 0.55;
+  if (longestW > maxW) {
+    fontSize *= maxW / longestW;
+    lines = buildLines(fontSize);
+  }
+
+  fontSize = Math.max(fontSize, 8);
+  const lineH = fontSize * 1.25;
+  const totalH = lines.length * lineH;
+  const countFs = Math.max(8, Math.min(fontSize * 0.72, 14));
+  const nameStartY = -totalH / 2 + lineH * 0.35;
+  const countY = totalH / 2 + countFs * 1.3;
+
+  const nameEl = g.append('text')
+    .attr('text-anchor', 'middle')
+    .attr('fill', isWinner ? '#1a1a00' : '#2d2060')
+    .attr('font-family', 'Inter, system-ui, sans-serif')
+    .attr('font-weight', '800')
+    .attr('font-size', fontSize + 'px')
+    .attr('paint-order', 'stroke')
+    .attr('stroke', isWinner ? 'rgba(251,191,36,0.3)' : 'rgba(255,255,255,0.6)')
+    .attr('stroke-width', '1.5px')
+    .attr('stroke-linejoin', 'round')
+    .style('pointer-events', 'none');
+
+  lines.forEach((line, i) => {
+    nameEl.append('tspan')
+      .attr('x', 0)
+      .attr('y', nameStartY + i * lineH)
+      .text(line);
+  });
+
+  // Only show vote count if bubble is large enough
+  if (r > 28 && countY + countFs * 0.5 < r * 0.95) {
+    g.append('text')
+      .attr('text-anchor', 'middle')
+      .attr('y', countY)
+      .attr('fill', isWinner ? 'rgba(26,16,0,0.7)' : 'rgba(45,32,96,0.75)')
+      .attr('font-family', 'Inter, system-ui, sans-serif')
+      .attr('font-size', countFs + 'px')
+      .attr('paint-order', 'stroke')
+      .attr('stroke', isWinner ? 'rgba(251,191,36,0.2)' : 'rgba(255,255,255,0.35)')
+      .attr('stroke-width', '1px')
+      .attr('stroke-linejoin', 'round')
+      .style('pointer-events', 'none')
+      .text(d.count + (d.count === 1 ? ' vote' : ' votes'));
+  }
+}
+
 function clearBubbles() {
   if (!svg) return;
   svg.selectAll('.bubble-group').remove();
@@ -151,8 +238,12 @@ function renderBubbles(answers) {
 
   const maxCount = Math.max(...entries.map(e => e[1]));
 
+  // Scale bubble radii to the viewport so they fill the screen on any device
+  const maxR = Math.min(width, height) * 0.18;
+  const minR = Math.max(18, Math.min(width, height) * 0.055);
+
   const nodes = entries.map(([text, count], i) => {
-    const r = Math.max(MIN_RADIUS, BASE_RADIUS * Math.sqrt(count / maxCount) * 2.2);
+    const r = Math.max(minR, maxR * Math.sqrt(count / maxCount));
     return { id: text, text, count, r, colorIdx: i % COLORS.length, rank: i };
   });
 
@@ -189,31 +280,6 @@ function renderBubbles(answers) {
     .attr('stroke-width', d => d.rank === 0 ? 2.5 : 1.5)
     .attr('stroke-opacity', d => d.rank === 0 ? 0.7 : 0.6);
 
-  enter.append('text')
-    .attr('class', 'bubble-label')
-    .attr('text-anchor', 'middle')
-    .attr('dy', '-0.15em')
-    .attr('fill', d => d.rank === 0 ? '#1a1a00' : '#2d2060')
-    .attr('font-family', 'Inter, system-ui, sans-serif')
-    .attr('font-weight', '800')
-    .attr('paint-order', 'stroke')
-    .attr('stroke', d => d.rank === 0 ? 'rgba(251,191,36,0.3)' : 'rgba(255,255,255,0.6)')
-    .attr('stroke-width', '2px')
-    .attr('stroke-linejoin', 'round')
-    .style('pointer-events', 'none');
-
-  enter.append('text')
-    .attr('class', 'bubble-count')
-    .attr('text-anchor', 'middle')
-    .attr('dy', '1.1em')
-    .attr('fill', d => d.rank === 0 ? 'rgba(26,16,0,0.75)' : 'rgba(45,32,96,0.8)')
-    .attr('font-family', 'Inter, system-ui, sans-serif')
-    .attr('paint-order', 'stroke')
-    .attr('stroke', d => d.rank === 0 ? 'rgba(251,191,36,0.2)' : 'rgba(255,255,255,0.4)')
-    .attr('stroke-width', '1.5px')
-    .attr('stroke-linejoin', 'round')
-    .style('pointer-events', 'none');
-
   // Merge and animate
   const merged = enter.merge(groups);
 
@@ -225,18 +291,8 @@ function renderBubbles(answers) {
     .ease(d3.easeElasticOut.amplitude(1).period(0.45))
     .attr('r', d => d.r);
 
-  merged.each(function(d) {
-    const g = d3.select(this);
-    const label = g.select('.bubble-label');
-    const countLabel = g.select('.bubble-count');
-
-    const maxChars = Math.floor(d.r / 5.5);
-    const displayText = d.text.length > maxChars ? d.text.slice(0, maxChars - 1) + '…' : d.text;
-    const fontSize = Math.min(18, d.r / 2.8);
-
-    label.attr('font-size', fontSize + 'px').text(displayText);
-    countLabel.attr('font-size', Math.min(13, fontSize * 0.75) + 'px').text(d.count + (d.count === 1 ? ' vote' : ' votes'));
-  });
+  // Set word-wrapped, size-fitted text on each bubble
+  merged.each(function(d) { setTextInBubble(this, d); });
 
   function ticked() {
     svg.selectAll('.bubble-group')
